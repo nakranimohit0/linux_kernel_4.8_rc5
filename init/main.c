@@ -477,8 +477,10 @@ static void __init mm_init(void)
 }
 
 void prnt(char *s) {
-  printk(KERN_INFO "mn249: %s", s);
+  printk(KERN_INFO "mn249: %s <<", s);
+  show_mem(0);
   show_mem(1);
+  printk(KERN_INFO "mn249: %s >>", s);
 }
 
 asmlinkage __visible void __init start_kernel(void)
