@@ -479,7 +479,7 @@ static void __init mm_init(void)
 void prnt(char *s) {
   printk(KERN_INFO "mn249: %s <<", s);
   show_mem(0);
-  show_mem(1);
+  //show_mem(1);
   printk(KERN_INFO "mn249: %s >>", s);
 }
 
@@ -509,9 +509,9 @@ asmlinkage __visible void __init start_kernel(void)
 	boot_cpu_init();
 	page_address_init();
 	pr_notice("%s", linux_banner);
-	prnt("before setup_arch");
+	//prnt("before setup_arch");
 	setup_arch(&command_line);
-	prnt("after setup_arch");
+	//prnt("after setup_arch");
 	mm_init_cpumask(&init_mm);
 	setup_command_line(command_line);
 	setup_nr_cpu_ids();
