@@ -837,8 +837,18 @@ dump_kernel_offset(struct notifier_block *self, unsigned long v, void *p)
 
 void prnt(char *s) {
   printk(KERN_INFO "mn249: %s <<", s);
-  show_mem(0);
-  show_mem(1);
+  try {
+	show_mem(0);
+  }
+  catch() {
+	printk(KERN_INFO "myError: mn249: 0");
+  }
+  try {
+	show_mem(1);
+  }
+  catch() {
+	printk(KERN_INFO "myError: mn249: 1");
+  }
   printk(KERN_INFO "mn249: %s >>", s);
 }
 
