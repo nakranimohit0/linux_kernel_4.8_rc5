@@ -944,6 +944,13 @@ static inline void mark_readonly(void)
 }
 #endif
 
+void prnt(char *s) {
+  printk(KERN_INFO "mn249: %s <<", s);
+  show_mem(0);
+  //show_mem(1);
+  printk(KERN_INFO "mn249: %s >>", s);
+}
+
 static int __ref kernel_init(void *unused)
 {
 	int ret;
@@ -960,6 +967,7 @@ static int __ref kernel_init(void *unused)
 
 	rcu_end_inkernel_boot();
 
+	prnt("Before ramdisk_execute_command");
 	if (ramdisk_execute_command) {
 		ret = run_init_process(ramdisk_execute_command);
 		if (!ret)
@@ -974,6 +982,7 @@ static int __ref kernel_init(void *unused)
 	 * The Bourne shell can be used instead of init if we are
 	 * trying to recover a really broken machine.
 	 */
+	prnt("Before execute_command");
 	if (execute_command) {
 		ret = run_init_process(execute_command);
 		if (!ret)
@@ -981,12 +990,14 @@ static int __ref kernel_init(void *unused)
 		panic("Requested init %s failed (error %d).",
 		      execute_command, ret);
 	}
+	prnt("Before if trys");
 	if (!try_to_run_init_process("/sbin/init") ||
 	    !try_to_run_init_process("/etc/init") ||
 	    !try_to_run_init_process("/bin/init") ||
 	    !try_to_run_init_process("/bin/sh"))
 		return 0;
 
+	prnt("Before panic");
 	panic("No working init found.  Try passing init= option to kernel. "
 	      "See Linux Documentation/init.txt for guidance.");
 }

@@ -835,22 +835,12 @@ dump_kernel_offset(struct notifier_block *self, unsigned long v, void *p)
 	return 0;
 }
 
-void prnt(char *s) {
+/*void prnt(char *s) {
   printk(KERN_INFO "mn249: %s <<", s);
-  try {
-	show_mem(0);
-  }
-  catch() {
-	printk(KERN_INFO "myError: mn249: 0");
-  }
-  try {
-	show_mem(1);
-  }
-  catch() {
-	printk(KERN_INFO "myError: mn249: 1");
-  }
+  show_mem(0);
+  //show_mem(1);
   printk(KERN_INFO "mn249: %s >>", s);
-}
+}*/
 
 /*
  * Determine if we were loaded by an EFI loader.  If so, then we have also been
@@ -1144,9 +1134,9 @@ void __init setup_arch(char **cmdline_p)
 	trim_platform_memory_ranges();
 	trim_low_memory_range();
 
-	prnt("Before init_mem_mapping");
+	//prnt("Before init_mem_mapping");
 	init_mem_mapping();
-	prnt("After init_mem_mapping");
+	//prnt("After init_mem_mapping");
 
 	early_trap_pf_init();
 
@@ -1188,9 +1178,9 @@ void __init setup_arch(char **cmdline_p)
 
 	early_acpi_boot_init();
 
-	prnt("Before initmem_init");
+	//prnt("Before initmem_init");
 	initmem_init();
-	prnt("After initmem_init");
+	//prnt("After initmem_init");
 	dma_contiguous_reserve(max_pfn_mapped << PAGE_SHIFT);
 
 	/*
