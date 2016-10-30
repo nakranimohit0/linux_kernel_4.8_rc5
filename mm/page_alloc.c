@@ -4000,7 +4000,8 @@ unsigned long nr_free_pagecache_pages(void)
 static inline void show_node(struct zone *zone)
 {
 	if (IS_ENABLED(CONFIG_NUMA))
-		printk("mn249: Node %d ", zone_to_nid(zone));
+		printk("Node %d, zone\t", zone_to_nid(zone));
+		//printk("Node %d ", zone_to_nid(zone));
 }
 
 long si_mem_available(void)
@@ -4139,6 +4140,46 @@ static void show_migration_types(unsigned char type)
 
 	*p = '\0';
 	printk("(%s) ", tmp);
+}
+
+void prntBuddyInfo(struct zone *zone, unsigned int filter) {
+  printk("mn249: <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< buddy info\n");
+  
+  for_each_populated_zone(zone) {
+	unsigned int order;
+	unsigned long nr[MAX_ORDER], flags, total = 0;
+	unsigned char types[MAX_ORDER];
+
+	if (skip_free_areas_node(filter, zone_to_nid(zone)))
+	  continue;
+	show_node(zone);
+	printk("%s", zone->name);
+	//printk("%s: ", zone->name);
+
+	spin_lock_irqsave(&zone->lock, flags);
+	for (order = 0; order < MAX_ORDER; order++) {
+	  struct free_area *area = &zone->free_area[order];
+	  int type;
+
+	  nr[order] = area->nr_free;
+	  total += nr[order] << order;
+
+	  types[order] = 0;
+	  for (type = 0; type < MIGRATE_TYPES; type++) {
+		if (!list_empty(&area->free_list[type]))
+		  types[order] |= 1 << type;
+	  }
+	}
+	spin_unlock_irqrestore(&zone->lock, flags);
+	for (order = 0; order < MAX_ORDER; order++) {
+	  printk("\t%lu", nr[order]);
+	  //printk("%lu*%lukB ", nr[order], K(1UL) << order);
+	  /*if (nr[order])
+		show_migration_types(types[order]);*/
+	}
+	//printk("= %lukB\n", K(total));
+  }
+  printk("mn249: buddy info >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>\n");
 }
 
 /*
@@ -4338,6 +4379,7 @@ void show_free_areas(unsigned int filter)
 	printk("mn249: %ld total pagecache pages\n", global_node_page_state(NR_FILE_PAGES));
 
 	show_swap_cache_info();
+	prntBuddyInfo(zone, filter);
 }
 
 static void zoneref_set_zone(struct zone *zone, struct zoneref *zoneref)
