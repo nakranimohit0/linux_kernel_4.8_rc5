@@ -4152,8 +4152,9 @@ void prntBuddyInfo(struct zone *zone, unsigned int filter) {
 
 	if (skip_free_areas_node(filter, zone_to_nid(zone)))
 	  continue;
+	printk("\n");
 	show_node(zone);
-	printk("\n%s", zone->name);
+	printk("%s", zone->name);
 	//printk("%s: ", zone->name);
 
 	spin_lock_irqsave(&zone->lock, flags);
