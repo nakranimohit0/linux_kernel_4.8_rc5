@@ -4153,7 +4153,7 @@ void prntBuddyInfo(struct zone *zone, unsigned int filter) {
 	if (skip_free_areas_node(filter, zone_to_nid(zone)))
 	  continue;
 	show_node(zone);
-	printk("%s", zone->name);
+	printk("\n%s", zone->name);
 	//printk("%s: ", zone->name);
 
 	spin_lock_irqsave(&zone->lock, flags);
@@ -4179,7 +4179,7 @@ void prntBuddyInfo(struct zone *zone, unsigned int filter) {
 	}
 	//printk("= %lukB\n", K(total));
   }
-  printk("mn249: buddy info >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>\n");
+  printk("\nmn249: buddy info >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>\n");
 }
 
 /*
