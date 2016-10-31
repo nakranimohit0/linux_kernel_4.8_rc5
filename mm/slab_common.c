@@ -1187,7 +1187,7 @@ static void cache_show(struct kmem_cache *s, struct seq_file *m)
 	seq_putc(m, '\n');
 }
 
-void prntSlabInfo() {
+void prntSlabInfo(void) {
   printk("\nmn249: <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< Slab Info\n\n");
   /* struct kmem_cache *s = list_entry(p, struct kmem_cache, list); */
   struct kmem_cache *s;
