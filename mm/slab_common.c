@@ -1165,9 +1165,9 @@ void prntCacheInfo(struct kmem_cache *s) {
 
 static void cache_show(struct kmem_cache *s, struct seq_file *m)
 {
-  printk("\nmn249: <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< Cache Info\n\n");
+  /*printk("\nmn249: <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< Cache Info\n\n");
   prntCacheInfo(s);
-  printk("\n\nmn249: Cache Info >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>\n");
+  printk("\n\nmn249: Cache Info >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>\n");*/
 	struct slabinfo sinfo;
 
 	memset(&sinfo, 0, sizeof(sinfo));
@@ -1187,8 +1187,24 @@ static void cache_show(struct kmem_cache *s, struct seq_file *m)
 	seq_putc(m, '\n');
 }
 
+void prntSlabInfo() {
+  printk("\nmn249: <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< Slab Info\n\n");
+  /* struct kmem_cache *s = list_entry(p, struct kmem_cache, list); */
+  struct kmem_cache *s;
+  
+  list_for_each_entry(s, &slab_caches, list) {
+	/*if (p == slab_caches.next)
+	  print_slabinfo_header(m);*/
+	if (is_root_cache(s))
+	  prntCacheInfo(s);
+	  /* cache_show(s, m); */
+  }
+  printk("\n\nmn249: Slab Info >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>\n");
+}
+
 static int slab_show(struct seq_file *m, void *p)
 {
+  prntSlabInfo();
 	struct kmem_cache *s = list_entry(p, struct kmem_cache, list);
 
 	if (p == slab_caches.next)
