@@ -1143,9 +1143,31 @@ memcg_accumulate_slabinfo(struct kmem_cache *s, struct slabinfo *info)
 	}
 }
 
+void prntCacheInfo(struct kmem_cache *s) {
+  struct slabinfo sinfo;
+
+  memset(&sinfo, 0, sizeof(sinfo));
+  get_slabinfo(s, &sinfo);
+
+  memcg_accumulate_slabinfo(s, &sinfo);
+  
+  printk("%-17s %6lu %6lu %6u %4u %4d",
+		 cache_name(s), sinfo.active_objs, sinfo.num_objs, s->size,
+		 sinfo.objects_per_slab, (1 << sinfo.cache_order));
+  
+  printk(" : tunables %4u %4u %4u",
+		 sinfo.limit, sinfo.batchcount, sinfo.shared);
+  printk(" : slabdata %6lu %6lu %6lu",
+		 sinfo.active_slabs, sinfo.num_slabs, sinfo.shared_avail);
+  /* slabinfo_show_stats(m, s); */
+  printk("\n");
+}
+
 static void cache_show(struct kmem_cache *s, struct seq_file *m)
 {
-  printk("mn249: in cache");
+  printk("\nmn249: <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< Cache Info\n\n");
+  prntCacheInfo(s);
+  printk("\n\nmn249: Cache Info >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>\n");
 	struct slabinfo sinfo;
 
 	memset(&sinfo, 0, sizeof(sinfo));
