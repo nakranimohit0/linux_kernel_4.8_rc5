@@ -951,11 +951,11 @@ void prnt(char *s) {
   printk(KERN_INFO "mn249: %s >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>\n", s);
 }
 
-void prntSlabInfo(char *s) {
+/*void prntSlabInfo(char *s) {
   printk(KERN_INFO "mn249: %s <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<\n", s);
   
   printk(KERN_INFO "mn249: %s >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>\n", s);
-}
+}*/
 
 static int __ref kernel_init(void *unused)
 {
@@ -974,7 +974,7 @@ static int __ref kernel_init(void *unused)
 	rcu_end_inkernel_boot();
 
 	prnt("Before ramdisk_execute_command");
-	prntSlabInfo("Before ramdisk_execute_command");
+	/* prntSlabInfo("Before ramdisk_execute_command"); */
 	if (ramdisk_execute_command) {
 		ret = run_init_process(ramdisk_execute_command);
 		if (!ret)
