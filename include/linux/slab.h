@@ -134,6 +134,8 @@ void memcg_create_kmem_cache(struct mem_cgroup *, struct kmem_cache *);
 void memcg_deactivate_kmem_caches(struct mem_cgroup *);
 void memcg_destroy_kmem_caches(struct mem_cgroup *);
 
+
+
 /*
  * Please use this macro to create slab caches. Simply specify the
  * name of the structure and maybe some flags that are listed above.
@@ -649,5 +651,7 @@ static inline void *kzalloc_node(size_t size, gfp_t flags, int node)
 
 unsigned int kmem_cache_size(struct kmem_cache *s);
 void __init kmem_cache_init_late(void);
+
+extern void prntSlabInfo(void);
 
 #endif	/* _LINUX_SLAB_H */
