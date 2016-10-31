@@ -1085,6 +1085,26 @@ void cache_random_seq_destroy(struct kmem_cache *cachep)
 #define SLABINFO_RIGHTS S_IRUSR
 #endif
 
+void prntSlabInfoHd(void) {
+  /*
+   * Output format version, so at least we can change it
+   * without _too_ many complaints.
+   */
+#ifdef CONFIG_DEBUG_SLAB
+  printk("slabinfo - version: 2.1 (statistics)\n");
+#else
+  printk("slabinfo - version: 2.1\n");
+#endif
+  printk("# name            <active_objs> <num_objs> <objsize> <objperslab> <pagesperslab>");
+  printk(" : tunables <limit> <batchcount> <sharedfactor>");
+  printk(" : slabdata <active_slabs> <num_slabs> <sharedavail>");
+#ifdef CONFIG_DEBUG_SLAB
+  printk(" : globalstat <listallocs> <maxobjs> <grown> <reaped> <error> <maxfreeable> <nodeallocs> <remotefrees> <alienoverflow>");
+  printk(" : cpustat <allochit> <allocmiss> <freehit> <freemiss>");
+#endif
+  printk("\n");
+}
+
 static void print_slabinfo_header(struct seq_file *m)
 {
 	/*
@@ -1188,9 +1208,10 @@ static void cache_show(struct kmem_cache *s, struct seq_file *m)
 }
 
 void prntSlabInfo(void) {
-  printk("\nmn249: <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< Slab Info\n\n");
+  /* printk("\nmn249: <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< Slab Info\n\n"); */
   /* struct kmem_cache *s = list_entry(p, struct kmem_cache, list); */
   struct kmem_cache *s;
+  prntSlabInfoHd();
   
   list_for_each_entry(s, &slab_caches, list) {
 	/*if (p == slab_caches.next)
@@ -1199,12 +1220,11 @@ void prntSlabInfo(void) {
 	  prntCacheInfo(s);
 	  /* cache_show(s, m); */
   }
-  printk("\n\nmn249: Slab Info >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>\n");
+  /* printk("\n\nmn249: Slab Info >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>\n"); */
 }
 
 static int slab_show(struct seq_file *m, void *p)
 {
-  prntSlabInfo();
 	struct kmem_cache *s = list_entry(p, struct kmem_cache, list);
 
 	if (p == slab_caches.next)

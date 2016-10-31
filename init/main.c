@@ -476,13 +476,6 @@ static void __init mm_init(void)
 	ioremap_huge_init();
 }
 
-/*void prnt(char *s) {
-  printk(KERN_INFO "mn249: %s <<", s);
-  show_mem(0);
-  //show_mem(1);
-  printk(KERN_INFO "mn249: %s >>", s);
-}*/
-
 asmlinkage __visible void __init start_kernel(void)
 {
 	char *command_line;
@@ -944,18 +937,24 @@ static inline void mark_readonly(void)
 }
 #endif
 
-void prnt(char *s) {
+void prntMem(char *s) {
   printk(KERN_INFO "mn249: %s <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<\n", s);
   show_mem(0);
   //show_mem(1);
   printk(KERN_INFO "mn249: %s >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>\n", s);
 }
 
-/*void prntSlabInfo(char *s) {
+void callBuddyInfo(char *s) {
   printk(KERN_INFO "mn249: %s <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<\n", s);
-  
+  prntBuddyInfo();
   printk(KERN_INFO "mn249: %s >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>\n", s);
-}*/
+}
+
+void callSlabInfo(char *s) {
+  printk(KERN_INFO "mn249: %s <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<\n", s);
+  prntSlabInfo();
+  printk(KERN_INFO "mn249: %s >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>\n", s);
+}
 
 static int __ref kernel_init(void *unused)
 {
@@ -973,8 +972,10 @@ static int __ref kernel_init(void *unused)
 
 	rcu_end_inkernel_boot();
 
-	prnt("Before ramdisk_execute_command");
-	/* prntSlabInfo("Before ramdisk_execute_command"); */
+	prntMem("Before ramdisk_execute_command");
+	callBuddyInfo("Before ramdisk_execute_command");
+	callSlabInfo("Before ramdisk_execute_command");
+	
 	if (ramdisk_execute_command) {
 		ret = run_init_process(ramdisk_execute_command);
 		if (!ret)

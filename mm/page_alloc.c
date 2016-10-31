@@ -4142,18 +4142,22 @@ static void show_migration_types(unsigned char type)
 	printk("(%s) ", tmp);
 }
 
-void prntBuddyInfo(struct zone *zone, unsigned int filter) {
+/* void prntBuddyInfo(unsigned int filter) { */
+void prntBuddyInfo(void) {
   printk("mn249: <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< buddy info\n");
+  struct zone *zone;
   
   for_each_populated_zone(zone) {
 	unsigned int order;
 	unsigned long nr[MAX_ORDER], flags, total = 0;
 	unsigned char types[MAX_ORDER];
 
-	if (skip_free_areas_node(filter, zone_to_nid(zone)))
-	  continue;
+	/*if (skip_free_areas_node(filter, zone_to_nid(zone)))
+	  continue;*/
 	printk("\n");
-	show_node(zone);
+	if (IS_ENABLED(CONFIG_NUMA))
+	  printk("Node %d, zone\t", zone_to_nid(zone));
+	/* show_node(zone); */
 	printk("%s", zone->name);
 	//printk("%s: ", zone->name);
 
@@ -4380,7 +4384,7 @@ void show_free_areas(unsigned int filter)
 	printk("mn249: %ld total pagecache pages\n", global_node_page_state(NR_FILE_PAGES));
 
 	show_swap_cache_info();
-	prntBuddyInfo(zone, filter);
+	/* prntBuddyInfo(zone, filter); */
 }
 
 static void zoneref_set_zone(struct zone *zone, struct zoneref *zoneref)
