@@ -1145,6 +1145,7 @@ memcg_accumulate_slabinfo(struct kmem_cache *s, struct slabinfo *info)
 
 static void cache_show(struct kmem_cache *s, struct seq_file *m)
 {
+  printk("mn249: in cache");
 	struct slabinfo sinfo;
 
 	memset(&sinfo, 0, sizeof(sinfo));
