@@ -416,7 +416,7 @@ static noinline void __ref rest_init(void)
 	printk(KERN_NOTICE "My_name: m_k_t_do_something threads are about to be created.\n");
 	my_kernel_thread_create_1();
 	my_kernel_thread_create_2();
-	printk(KERN_NOTICE "My_name: m_k_t_do_something threads are created.\n";)
+	printk(KERN_NOTICE "My_name: m_k_t_do_something threads are created.\n");
 	prntPrcs("After 2 new threads");
 
 	/*
@@ -424,7 +424,7 @@ static noinline void __ref rest_init(void)
 	 * at least once to get things moving:
 	 */
 	init_idle_bootup_task(current);
-	prntPrcs("Before schedule_preempt_disabled\n");
+	prntPrcs("Before schedule_preempt_disabled");
 	schedule_preempt_disabled();
 	/* Call into cpu_idle with preempt disabled */
 	prntPrcs("Before cpu_startup_entry");
@@ -1030,35 +1030,39 @@ static int __ref kernel_init(void *unused)
 	      "See Linux Documentation/init.txt for guidance.");
 }
 
-static void m_k_t_do_something_1(void) {
+static int m_k_t_do_something_1(void* unused) {
   struct task_struct *curtask = current;
   strcpy(curtask->comm, "My name: m_k_t_do_something_1");
   set_task_state(curtask, TASK_RUNNING);
   printk(KERN_NOTICE "My name: m_k_t_do_something_1 is about to be scheduled.\n");
   schedule();
   printk(KERN_NOTICE "My_name: m_k_t_do_something_1 is now scheduled.\n");
+  return 0;
 }
 
-static void m_k_t_do_something_2(void) {
+static int m_k_t_do_something_2(void* unused) {
   struct task_struct *curtask = current;
   strcpy(curtask->comm, "My_name: m_k_t_do_something_2");
   set_task_state(curtask, TASK_RUNNING);
   printk(KERN_NOTICE "My_name: m_k_t_do_something_2 is about to be scheduled.\n");
   schedule();
   printk(KERN_NOTICE "My_name: m_k_t_do_something_2 is now scheduled.\n");
+  return 0;
 }
 
 static void my_kernel_thread_create_1(void) {
   int mypid;
   printk(KERN_NOTICE "My_name: Calling kernel_thread(my_ker_thd_1)\n");
-  mypid = kernel_thread(m_k_t_do_something_1, NULL, CLONE_KERNEL);
+  /* mypid = kernel_thread(m_k_t_do_something_1, NULL, CLONE_KERNEL); */
+  mypid = kernel_thread(m_k_t_do_something_1, NULL, CLONE_FS);
   printk(KERN_NOTICE "My_name: my_ker_thd_1 = %d\n", mypid);
 }
 
 static void my_kernel_thread_create_2(void) {
   int mypid;
   printk(KERN_NOTICE "My_name: Calling kernel_thread(my_ker_thd_2)\n");
-  mypid = kernel_thread(m_k_t_do_something_2, NULL, CLONE_KERNEL);
+  /* mypid = kernel_thread(m_k_t_do_something_2, NULL, CLONE_KERNEL); */
+  mypid = kernel_thread(m_k_t_do_something_2, NULL, CLONE_FS);
   printk(KERN_NOTICE "My_name: my_ker_thd_2 = %d\n", mypid);
 }
 
