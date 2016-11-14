@@ -130,5 +130,3 @@ void flush_kthread_work(struct kthread_work *work);
 void flush_kthread_worker(struct kthread_worker *worker);
 
 #endif /* _LINUX_KTHREAD_H */
-
-void prntPrcs(char *s);

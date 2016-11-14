@@ -89,6 +89,8 @@
 #include <asm/cacheflush.h>
 
 static int kernel_init(void *);
+static void my_kernel_thread_create_1(void);
+static void my_kernel_thread_create_2(void);
 
 extern void init_IRQ(void);
 extern void fork_init(void);
@@ -405,12 +407,18 @@ static noinline void __ref rest_init(void)
 	kernel_thread(kernel_init, NULL, CLONE_FS);
 	numa_default_policy();
 	pid = kernel_thread(kthreadd, NULL, CLONE_FS | CLONE_FILES);
+	prntPrcs("After kthreadd");
 	rcu_read_lock();
 	kthreadd_task = find_task_by_pid_ns(pid, &init_pid_ns);
 	rcu_read_unlock();
 	complete(&kthreadd_done);
 
-	prntPrcs("Before init_idle_bootup_task\n");
+	printk(KERN_NOTICE "My_name: m_k_t_do_something threads are about to be created.\n");
+	my_kernel_thread_create_1();
+	my_kernel_thread_create_2();
+	printk(KERN_NOTICE "My_name: m_k_t_do_something threads are created.\n";)
+	prntPrcs("After 2 new threads");
+
 	/*
 	 * The boot idle thread must execute schedule()
 	 * at least once to get things moving:
@@ -419,9 +427,8 @@ static noinline void __ref rest_init(void)
 	prntPrcs("Before schedule_preempt_disabled\n");
 	schedule_preempt_disabled();
 	/* Call into cpu_idle with preempt disabled */
-	prntPrcs("Before cpu_startup_entry\n");
+	prntPrcs("Before cpu_startup_entry");
 	cpu_startup_entry(CPUHP_ONLINE);
-	prntPrcs("After cpu_startup_entry\n");
 }
 
 /* Check for early params. */
@@ -1021,6 +1028,38 @@ static int __ref kernel_init(void *unused)
 
 	panic("No working init found.  Try passing init= option to kernel. "
 	      "See Linux Documentation/init.txt for guidance.");
+}
+
+static void m_k_t_do_something_1(void) {
+  struct task_struct *curtask = current;
+  strcpy(curtask->comm, "My name: m_k_t_do_something_1");
+  set_task_state(curtask, TASK_RUNNING);
+  printk(KERN_NOTICE "My name: m_k_t_do_something_1 is about to be scheduled.\n");
+  schedule();
+  printk(KERN_NOTICE "My_name: m_k_t_do_something_1 is now scheduled.\n");
+}
+
+static void m_k_t_do_something_2(void) {
+  struct task_struct *curtask = current;
+  strcpy(curtask->comm, "My_name: m_k_t_do_something_2");
+  set_task_state(curtask, TASK_RUNNING);
+  printk(KERN_NOTICE "My_name: m_k_t_do_something_2 is about to be scheduled.\n");
+  schedule();
+  printk(KERN_NOTICE "My_name: m_k_t_do_something_2 is now scheduled.\n");
+}
+
+static void my_kernel_thread_create_1(void) {
+  int mypid;
+  printk(KERN_NOTICE "My_name: Calling kernel_thread(my_ker_thd_1)\n");
+  mypid = kernel_thread(m_k_t_do_something_1, NULL, CLONE_KERNEL);
+  printk(KERN_NOTICE "My_name: my_ker_thd_1 = %d\n", mypid);
+}
+
+static void my_kernel_thread_create_2(void) {
+  int mypid;
+  printk(KERN_NOTICE "My_name: Calling kernel_thread(my_ker_thd_2)\n");
+  mypid = kernel_thread(m_k_t_do_something_2, NULL, CLONE_KERNEL);
+  printk(KERN_NOTICE "My_name: my_ker_thd_2 = %d\n", mypid);
 }
 
 static noinline void __init kernel_init_freeable(void)

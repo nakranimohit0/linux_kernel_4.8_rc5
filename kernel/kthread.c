@@ -528,7 +528,6 @@ int kthreadd(void *unused)
 
 			create_kthread(create);
 
-			prntPrcs("Before spin_lock\n");
 			spin_lock(&kthread_create_lock);
 		}
 		spin_unlock(&kthread_create_lock);
