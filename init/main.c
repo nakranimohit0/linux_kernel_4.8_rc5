@@ -89,6 +89,8 @@
 #include <asm/cacheflush.h>
 
 static int kernel_init(void *);
+static int m_k_t_do_something_1(void *);
+static int m_k_t_do_something_2(void *);
 static void my_kernel_thread_create_1(void);
 static void my_kernel_thread_create_2(void);
 
@@ -1030,7 +1032,7 @@ static int __ref kernel_init(void *unused)
 	      "See Linux Documentation/init.txt for guidance.");
 }
 
-static int m_k_t_do_something_1(void* unused) {
+static int m_k_t_do_something_1(void *unused) {
   struct task_struct *curtask = current;
   strcpy(curtask->comm, "My name: m_k_t_do_something_1");
   set_task_state(curtask, TASK_RUNNING);
@@ -1040,7 +1042,7 @@ static int m_k_t_do_something_1(void* unused) {
   return 0;
 }
 
-static int m_k_t_do_something_2(void* unused) {
+static int m_k_t_do_something_2(void *unused) {
   struct task_struct *curtask = current;
   strcpy(curtask->comm, "My_name: m_k_t_do_something_2");
   set_task_state(curtask, TASK_RUNNING);
