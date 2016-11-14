@@ -380,6 +380,18 @@ static void __init setup_command_line(char *command_line)
 
 static __initdata DECLARE_COMPLETION(kthreadd_done);
 
+void prntPrcs(char *s) {
+  printk(KERN_INFO "mn249: %s <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<\n", s);
+  struct task_struct *it;
+  it = current;
+  char *dlm = " ";
+  
+  for_each_process(it) {
+	printk(KERN_INFO "%d%s%d%s%lu%s%d%s%u%s%s\n", it->pid, dlm, it->parent->pid, dlm, it->state, dlm, it->cred->uid.val, dlm, it->policy, dlm, it->comm);
+  }
+  printk(KERN_INFO "mn249: %s >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>\n", s);
+}
+
 static noinline void __ref rest_init(void)
 {
 	int pid;
@@ -398,14 +410,18 @@ static noinline void __ref rest_init(void)
 	rcu_read_unlock();
 	complete(&kthreadd_done);
 
+	prntPrcs("Before init_idle_bootup_task\n");
 	/*
 	 * The boot idle thread must execute schedule()
 	 * at least once to get things moving:
 	 */
 	init_idle_bootup_task(current);
+	prntPrcs("Before schedule_preempt_disabled\n");
 	schedule_preempt_disabled();
 	/* Call into cpu_idle with preempt disabled */
+	prntPrcs("Before cpu_startup_entry\n");
 	cpu_startup_entry(CPUHP_ONLINE);
+	prntPrcs("After cpu_startup_entry\n");
 }
 
 /* Check for early params. */
