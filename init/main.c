@@ -406,30 +406,32 @@ static noinline void __ref rest_init(void)
 	 * the init task will end up wanting to create kthreads, which, if
 	 * we schedule it before we create kthreadd, will OOPS.
 	 */
+	prntPrcs("Before kernel_thread(kernel_init)");
 	kernel_thread(kernel_init, NULL, CLONE_FS);
 	numa_default_policy();
+	prntPrcs("After kernel_thread(kernel_init)");
 	pid = kernel_thread(kthreadd, NULL, CLONE_FS | CLONE_FILES);
-	prntPrcs("After kthreadd");
+	prntPrcs("After kernel_thread(kthreadd)");
 	rcu_read_lock();
 	kthreadd_task = find_task_by_pid_ns(pid, &init_pid_ns);
 	rcu_read_unlock();
 	complete(&kthreadd_done);
 
-	printk(KERN_NOTICE "My_name: m_k_t_do_something threads are about to be created.\n");
-	my_kernel_thread_create_1();
-	my_kernel_thread_create_2();
-	printk(KERN_NOTICE "My_name: m_k_t_do_something threads are created.\n");
-	prntPrcs("After 2 new threads");
+	/* printk(KERN_NOTICE "mn249: m_k_t_do_something threads are about to be created.\n"); */
+	/* my_kernel_thread_create_1(); */
+	/* my_kernel_thread_create_2(); */
+	/* printk(KERN_NOTICE "mn249: m_k_t_do_something threads are created.\n"); */
+	/* prntPrcs("Before init_idle_bootup_task"); */
 
 	/*
 	 * The boot idle thread must execute schedule()
 	 * at least once to get things moving:
 	 */
 	init_idle_bootup_task(current);
-	prntPrcs("Before schedule_preempt_disabled");
+	/* prntPrcs("Before schedule_preempt_disabled"); */
 	schedule_preempt_disabled();
 	/* Call into cpu_idle with preempt disabled */
-	prntPrcs("Before cpu_startup_entry");
+	/* prntPrcs("Before cpu_startup_entry"); */
 	cpu_startup_entry(CPUHP_ONLINE);
 }
 
@@ -1001,6 +1003,13 @@ static int __ref kernel_init(void *unused)
 	callBuddyInfo("Before ramdisk_execute_command");
 	callSlabInfo("Before ramdisk_execute_command");
 	
+	prntPrcs("Before new threads");
+	printk(KERN_NOTICE "mn249: m_k_t_do_something threads are about to be created.\n");
+	my_kernel_thread_create_1();
+	my_kernel_thread_create_2();
+	printk(KERN_NOTICE "mn249: m_k_t_do_something threads are created.\n");
+	prntPrcs("After new threads");
+	
 	if (ramdisk_execute_command) {
 		ret = run_init_process(ramdisk_execute_command);
 		if (!ret)
@@ -1034,39 +1043,63 @@ static int __ref kernel_init(void *unused)
 
 static int m_k_t_do_something_1(void *unused) {
   struct task_struct *curtask = current;
-  strcpy(curtask->comm, "My name: m_k_t_do_something_1");
+  strcpy(curtask->comm, "mn249: my_ker_thd_1");
   set_task_state(curtask, TASK_RUNNING);
-  printk(KERN_NOTICE "My name: m_k_t_do_something_1 is about to be scheduled.\n");
+  printk(KERN_NOTICE "mn249: m_k_t_do_something_1 is about to be scheduled.\n");
   schedule();
-  printk(KERN_NOTICE "My_name: m_k_t_do_something_1 is now scheduled.\n");
-  return 0;
+  printk(KERN_NOTICE "mn249: m_k_t_do_something_1 is now scheduled.\n");
+  do_exit(0);
+  /*if (ramdisk_execute_command) {
+	ret = run_init_process(ramdisk_execute_command);
+	printk("mn249: ret: %d\n", ret);
+	if (!ret)
+	  return 0;
+	printk("Before pr_err()\n");
+	pr_err("Failed to execute %s (error %d)\n",
+		   ramdisk_execute_command, ret);
+  }
+  /* return 0; 
+  if (!try_to_run_init_process("/sbin/init")) {
+	return 0;
+  }*/
+  /* return 1; */
+  /* do_exit(0); */
 }
 
-static int m_k_t_do_something_2(void *unused) {
+/*static int m_k_t_do_something_2(void *unused) {
   struct task_struct *curtask = current;
-  strcpy(curtask->comm, "My_name: m_k_t_do_something_2");
+  strcpy(curtask->comm, "mn249: m_k_t_do_something_2");
   set_task_state(curtask, TASK_RUNNING);
-  printk(KERN_NOTICE "My_name: m_k_t_do_something_2 is about to be scheduled.\n");
+  printk(KERN_NOTICE "mn249: m_k_t_do_something_2 is about to be scheduled.\n");
   schedule();
-  printk(KERN_NOTICE "My_name: m_k_t_do_something_2 is now scheduled.\n");
-  return 0;
-}
+  printk(KERN_NOTICE "mn249: m_k_t_do_something_2 is now scheduled.\n");
+  /* return 0; */
+  /*if (!try_to_run_init_process("/sbin/init") ||
+	  !try_to_run_init_process("/etc/init") ||
+	  !try_to_run_init_process("/bin/init") ||
+	  !try_to_run_init_process("/bin/sh"))
+	return 0;
+  
+  panic("No working init found.  Try passing init= option to kernel. "
+  "See Linux Documentation/init.txt for guidance.");* /
+  do_exit(0);
+}*/
 
 static void my_kernel_thread_create_1(void) {
   int mypid;
-  printk(KERN_NOTICE "My_name: Calling kernel_thread(my_ker_thd_1)\n");
+  printk(KERN_NOTICE "mn249: Calling kernel_thread(my_ker_thd_1)\n");
   /* mypid = kernel_thread(m_k_t_do_something_1, NULL, CLONE_KERNEL); */
   mypid = kernel_thread(m_k_t_do_something_1, NULL, CLONE_FS);
-  printk(KERN_NOTICE "My_name: my_ker_thd_1 = %d\n", mypid);
+  printk(KERN_NOTICE "mn249: my_ker_thd_1 = %d\n", mypid);
 }
 
-static void my_kernel_thread_create_2(void) {
+/*static void my_kernel_thread_create_2(void) {
   int mypid;
-  printk(KERN_NOTICE "My_name: Calling kernel_thread(my_ker_thd_2)\n");
-  /* mypid = kernel_thread(m_k_t_do_something_2, NULL, CLONE_KERNEL); */
+  printk(KERN_NOTICE "mn249: Calling kernel_thread(my_ker_thd_2)\n");
+  /* mypid = kernel_thread(m_k_t_do_something_2, NULL, CLONE_KERNEL); * /
   mypid = kernel_thread(m_k_t_do_something_2, NULL, CLONE_FS);
-  printk(KERN_NOTICE "My_name: my_ker_thd_2 = %d\n", mypid);
-}
+  printk(KERN_NOTICE "mn249: my_ker_thd_2 = %d\n", mypid);
+}*/
 
 static noinline void __init kernel_init_freeable(void)
 {
