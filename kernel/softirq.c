@@ -761,6 +761,31 @@ static __init int spawn_ksoftirqd(void)
 }
 early_initcall(spawn_ksoftirqd);
 
+DEFINE_PER_CPU(struct task_struct *, my_hotplugd);
+
+static int my_hotplugd_should_run(unsigned int cpu) {
+  return true;
+}
+
+static void run_my_hotplugd(unsigned int cpu) {
+  /* print something to indicate that my_hotplugd/{0,1,2,3} are up and running */
+  //printk(KERN_INFO "mn249: my_hotplugd/%d up and running\n", cpu);
+}
+
+static struct smp_hotplug_thread my_hotplug_threads = {
+  .store                  = &my_hotplugd,
+  .thread_should_run	  = my_hotplugd_should_run,
+  .thread_fn              = run_my_hotplugd,
+  .thread_comm            = "my_hotplugd/%u",
+};
+
+static __init int spawn_my_hotplug_threads(void) {
+  BUG_ON(smpboot_register_percpu_thread(&my_hotplug_threads));
+  return 0;
+}
+
+early_initcall(spawn_my_hotplug_threads);
+
 /*
  * [ These __weak aliases are kept in a separate compilation unit, so that
  *   GCC does not inline them incorrectly. ]
