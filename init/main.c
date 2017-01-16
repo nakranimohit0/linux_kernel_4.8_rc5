@@ -1049,21 +1049,6 @@ static int m_k_t_do_something_1(void *unused) {
   schedule();
   printk(KERN_NOTICE "mn249: m_k_t_do_something_1 is now scheduled.\n");
   do_exit(0);
-  /*if (ramdisk_execute_command) {
-	ret = run_init_process(ramdisk_execute_command);
-	printk("mn249: ret: %d\n", ret);
-	if (!ret)
-	  return 0;
-	printk("Before pr_err()\n");
-	pr_err("Failed to execute %s (error %d)\n",
-		   ramdisk_execute_command, ret);
-  }
-  /* return 0; 
-  if (!try_to_run_init_process("/sbin/init")) {
-	return 0;
-  }*/
-  /* return 1; */
-  /* do_exit(0); */
 }
 
 static int m_k_t_do_something_2(void *unused) {
@@ -1075,16 +1060,6 @@ static int m_k_t_do_something_2(void *unused) {
   schedule();
   printk(KERN_NOTICE "mn249: m_k_t_do_something_2 is now scheduled.\n");
   do_exit(0);
-  /* return 0; */
-  /*if (!try_to_run_init_process("/sbin/init") ||
-	  !try_to_run_init_process("/etc/init") ||
-	  !try_to_run_init_process("/bin/init") ||
-	  !try_to_run_init_process("/bin/sh"))
-	return 0;
-  
-  panic("No working init found.  Try passing init= option to kernel. "
-  "See Linux Documentation/init.txt for guidance.");* /
-  do_exit(0);*/
 }
 
 static void my_kernel_thread_create_1(void) {
