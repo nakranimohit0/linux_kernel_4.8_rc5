@@ -769,12 +769,13 @@ static int my_hotplugd_should_run(unsigned int cpu) {
 
 static void run_my_hotplugd(unsigned int cpu) {
   /* print something to indicate that my_hotplugd/{0,1,2,3} are up and running */
-  //printk(KERN_INFO "mn249: my_hotplugd/%d up and running\n", cpu);
+  printk(KERN_INFO "mn249: my_hotplugd/%d up and running\n", cpu);
+  do_exit(0);
 }
 
 static struct smp_hotplug_thread my_hotplug_threads = {
   .store                  = &my_hotplugd,
-  .thread_should_run	  = my_hotplugd_should_run,
+  /* .thread_should_run	  = my_hotplugd_should_run, */
   .thread_fn              = run_my_hotplugd,
   .thread_comm            = "my_hotplugd/%u",
 };
